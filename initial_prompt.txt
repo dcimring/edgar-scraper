@@ -1,0 +1,15 @@
+I want you to act as a product manager and software architect. Please help me create an initial software requirements document for a backend service with the following functionality:
+
+1. The app checks the latest filings from the SEC EDGAR system every 5 minutes.
+2. It parses each new filing's full text (or relevant sections) to determine whether the content is related to crypto or cryptocurrency topics (e.g., Bitcoin, Ethereum, stablecoins, blockchain, digital assets, tokens, etc.).
+3. If the filing contains crypto-related content, the app should generate an alert message summarizing the relevant filing (company name, form type, date, link to filing, and a short snippet or summary of the relevant crypto-related content).
+4. That alert message should be sent to a specific Telegram chat using the Telegram Bot API.
+5. The system must be resilient to rate limits and handle retries for failed requests.
+6. The document should include:
+   - Functional requirements
+   - Non-functional requirements (e.g., performance, reliability)
+   - Technical architecture overview
+   - API usage details (SEC and Telegram)
+   - Key components/services/modules
+   - Optional enhancements or future improvements
+7. Use simple, professional language so that developers and product managers can easily understand it.

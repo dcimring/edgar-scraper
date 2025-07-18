@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 
 from src.database import Database
-from src.llm_client import LlmClient
+from src.keyword_analyzer import KeywordAnalyzer
 from src.sec_client import SecEdgarClient
 from src.telegram_client import TelegramClient
 
@@ -14,12 +14,12 @@ logging.basicConfig(
 )
 
 
-def main():
+async def main():
     """
     Main function to run the SEC EDGAR Crypto Alert Service.
     """
     sec_client = SecEdgarClient()
-    llm_client = LlmClient()
+    keyword_analyzer = KeywordAnalyzer()
     telegram_client = TelegramClient()
     db = Database()
 
@@ -39,10 +39,10 @@ def main():
                         filing_details = {
                             "company_name": filing["title"].split(" - ")[1],
                             "form_type": filing["title"].split(" - ")[0],
-                            "filing_date": filing["published"],
+                            "filing_date": filing["published"] if filing["published"] is not None else "N/A",
                             "link": filing["link"],
                         }
-                        telegram_client.send_alert(filing_details, analysis["summary"])
+                        await telegram_client.send_alert(filing_details, analysis["summary"])
                     db.add_filing(filing_id)
                 else:
                     logging.warning(
@@ -52,7 +52,7 @@ def main():
                 logging.info(f"Skipping already processed filing: {filing['title']}")
 
         logging.info("Waiting for the next check...")
-        time.sleep(300)  # Wait for 5 minutes
+        await asyncio.sleep(300)  # Wait for 5 minutes
 
 
 def extract_filing_id(url: str) -> str:
@@ -64,5 +64,7 @@ def extract_filing_id(url: str) -> str:
     return path.split("/")[-1].replace("-index.html", "")
 
 
+import asyncio
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

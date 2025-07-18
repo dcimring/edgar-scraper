@@ -10,9 +10,11 @@ class KeywordAnalyzer:
     """
 
     CRYPTO_KEYWORDS = [
-        'crypto', 'cryptocurrency', 'Bitcoin', 'Ethereum', 'stablecoin',
-        'blockchain', 'digital assets', 'tokens', 'NFT', 'Web3', 'DLT',
-        'cryptographic', 'mining', 'DeFi', 'DAO'
+        'crypto', 'cryptocurrency', 'stablecoin', 'blockchain', 'digital assets',
+        'tokens', 'NFT', 'Web3', 'DLT', 'cryptographic', 'mining', 'DeFi', 'DAO',
+        'Bitcoin', 'BTC', 'Ethereum', 'ETH', 'Tether', 'USDT', 'XRP', 'BNB',
+        'Solana', 'SOL', 'USD Coin', 'USDC', 'Dogecoin', 'DOGE', 'TRON', 'TRX',
+        'Cardano', 'ADA'
     ]
 
     def analyze_filing(self, filing_text: str) -> Dict[str, Optional[str]]:

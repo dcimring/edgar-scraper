@@ -63,13 +63,13 @@ class TelegramClient:
 if __name__ == "__main__":
     # This is an example of how to use the TelegramClient.
     # You would need to have a .env file with your TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.
-    # client = TelegramClient()
-    # sample_filing = {
-    #     'company_name': 'Example Corp',
-    #     'form_type': '8-K',
-    #     'filing_date': '2025-07-14',
-    #     'link': 'https://www.sec.gov/example-filing'
-    # }
-    # summary = "This is a test summary."
-    # client.send_alert(sample_filing, summary)
-    pass
+    client = TelegramClient()
+    sample_filing = {
+        'company_name': 'Example Corp',
+        'form_type': '8-K',
+        'filing_date': '2025-07-14',
+        'link': 'https://www.sec.gov/example-filing'
+    }
+    summary = "This is a test summary."
+    client.send_alert(sample_filing, summary)
+    # pass

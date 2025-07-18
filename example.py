@@ -27,7 +27,7 @@ def get_recent_sec_filings(num_filings=5):
     # Replace 'your_email@example.com' with your actual email address.
     headers = {
         'User-Agent': 'MyApp/1.0 (guy@myapp.com)', # Example: 'MySECAlertApp/1.0 (john.doe@example.com)'
-        'From': 'gay@myapp.com' # Replace with your email
+        'From': 'guy@myapp.com' # Replace with your email
     }
 
     try:

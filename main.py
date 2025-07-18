@@ -34,7 +34,7 @@ def main():
                 full_text = sec_client.get_full_filing_text(filing["link"])
 
                 if full_text:
-                    analysis = llm_client.analyze_filing(full_text)
+                    analysis = keyword_analyzer.analyze_filing(full_text)
                     if analysis["crypto_detected"]:
                         filing_details = {
                             "company_name": filing["title"].split(" - ")[1],

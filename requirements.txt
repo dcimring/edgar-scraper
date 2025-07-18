@@ -6,6 +6,6 @@ black
 isort
 pytest
 pytest-mock
-google-generativeai
+
 python-telegram-bot
 beautifulsoup4

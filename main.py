@@ -61,7 +61,7 @@ def extract_filing_id(url: str) -> str:
     Example: https://www.sec.gov/Archives/edgar/data/1234567/0001234567-25-000001-index.html -> 0001234567-25-000001
     """
     path = urlparse(url).path
-    return path.split("/")[-1].replace("-index.html", "")
+    return path.split("/")[-1].replace("-index.html", "").replace("-index.htm", "")
 
 
 import asyncio

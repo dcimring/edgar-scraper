@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 import feedparser
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -77,28 +78,24 @@ class SecEdgarClient:
             The full text of the filing, or None if it cannot be retrieved.
         """
         try:
-            response = requests.get(filing_url, headers=self.headers, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, "html.parser")
-
-            # Find the link to the primary document
-            primary_doc_link = soup.find(
-                "a", href=lambda href: href and href.endswith((".txt", ".htm"))
-            )
-            if not primary_doc_link:
-                logging.warning(f"Could not find primary document link in {filing_url}")
+            parsed_url = urlparse(filing_url)
+            path_parts = parsed_url.path.split('/')
+            if len(path_parts) < 7: # Ensure there are enough parts for CIK and accession number
+                logging.warning(f"Invalid filing URL format: {filing_url}")
                 return None
 
-            # Construct the full URL for the document
-            doc_url = f"https://www.sec.gov{primary_doc_link['href']}"
+            cik = path_parts[4]
+            accession_no_dashes = path_parts[5]
+            accession_no_with_dashes = path_parts[6].replace('-index.htm', '')
+
+            # Construct the full URL for the .txt document
+            doc_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_no_dashes}/{accession_no_with_dashes}.txt"
 
             # Fetch the document content
             doc_response = requests.get(doc_url, headers=self.headers, timeout=10)
             doc_response.raise_for_status()
 
-            # Extract text from the document
-            doc_soup = BeautifulSoup(doc_response.content, "html.parser")
-            return doc_soup.get_text()
+            return doc_response.text
 
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching filing text from {filing_url}: {e}")

@@ -79,29 +79,45 @@ class TestSecEdgarClient(unittest.TestCase):
         """
         Test that get_full_filing_text successfully extracts text from a filing.
         """
-        # Mock the response for the index page
-        mock_index_response = MagicMock()
-        mock_index_response.status_code = 200
-        mock_index_response.content = b"""
-            <html><body>
-                <a href="/Archives/edgar/data/1234567/0001234567-25-000001/filing-document.htm">filing-document.htm</a>
-            </body></html>
-        """
-
-        # Mock the response for the filing document
-        mock_doc_response = MagicMock()
-        mock_doc_response.status_code = 200
-        mock_doc_response.content = (
-            b"<html><body><p>This is the filing text.</p></body></html>"
-        )
-
-        # Set the side_effect to return the appropriate mock response
-        mock_get.side_effect = [mock_index_response, mock_doc_response]
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = "This is the full filing text."
+        mock_get.return_value = mock_response
 
         client = SecEdgarClient()
-        text = client.get_full_filing_text("http://example.com/index.html")
+        # Use a realistic SEC filing index URL for testing
+        filing_url = "https://www.sec.gov/Archives/edgar/data/1234567/000123456725000001/0001234567-25-000001-index.htm"
+        text = client.get_full_filing_text(filing_url)
 
-        self.assertEqual(text, "This is the filing text.")
+        self.assertEqual(text, "This is the full filing text.")
+        # Verify that requests.get was called with the correct .txt URL
+        expected_doc_url = "https://www.sec.gov/Archives/edgar/data/1234567/000123456725000001/0001234567-25-000001.txt"
+        mock_get.assert_called_once_with(expected_doc_url, headers=client.headers, timeout=10)
+
+    @patch("src.sec_client.requests.get")
+    def test_get_full_filing_text_request_error(self, mock_get):
+        """
+        Test that get_full_filing_text handles a request exception.
+        """
+        mock_get.side_effect = requests.exceptions.RequestException("Test error")
+
+        client = SecEdgarClient()
+        filing_url = "https://www.sec.gov/Archives/edgar/data/1234567/0001234567-25-000001-index.htm"
+        text = client.get_full_filing_text(filing_url)
+
+        self.assertIsNone(text)
+
+    @patch("src.sec_client.requests.get")
+    def test_get_full_filing_text_invalid_url(self, mock_get):
+        """
+        Test that get_full_filing_text handles an invalid filing URL format.
+        """
+        client = SecEdgarClient()
+        filing_url = "https://www.sec.gov/invalid/url"
+        text = client.get_full_filing_text(filing_url)
+
+        self.assertIsNone(text)
+        mock_get.assert_not_called() # Ensure no request is made for invalid URL
 
 
 if __name__ == "__main__":

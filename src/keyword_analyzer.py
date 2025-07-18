@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict, Optional
 
 # Configure logging
@@ -35,9 +36,10 @@ class KeywordAnalyzer:
 
         for line in lines:
             for keyword in self.CRYPTO_KEYWORDS:
-                if keyword.lower() in line.lower():
+                if re.search(r'\b' + re.escape(keyword) + r'\b', line, re.IGNORECASE):
                     detected_keywords.append(keyword)
-                    snippet.append(line.strip())
+                    cleaned_line = re.sub(r'<[^>]*>', '', line.strip())
+                    snippet.append(cleaned_line)
                     break  # Move to the next line once a keyword is found in the current line
 
         if detected_keywords:

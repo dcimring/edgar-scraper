@@ -55,5 +55,28 @@ class TestKeywordAnalyzer(unittest.TestCase):
         self.assertIn("blockchain", result['summary'])
         self.assertIn("NFT", result['summary'])
 
+    def test_analyze_filing_partial_word_no_match(self):
+        """
+        Test that partial word matches are not detected.
+        """
+        sample_text = "The soldier walked through the consolation fields."
+        result = self.analyzer.analyze_filing(sample_text)
+
+        self.assertFalse(result['crypto_detected'])
+        self.assertIsNone(result['summary'])
+
+    def test_analyze_filing_removes_html_tags(self):
+        """
+        Test that all HTML tags are removed from the snippet.
+        """
+        sample_text = "<p>This is a <b>blockchain</b> related sentence with <i>multiple</i> tags.</p>"
+        result = self.analyzer.analyze_filing(sample_text)
+
+        self.assertTrue(result['crypto_detected'])
+        self.assertNotIn("<p>", result['summary'])
+        self.assertNotIn("<b>", result['summary'])
+        self.assertNotIn("<i>", result['summary'])
+        self.assertIn("This is a blockchain related sentence with multiple tags.", result['summary'])
+
 if __name__ == '__main__':
     unittest.main()

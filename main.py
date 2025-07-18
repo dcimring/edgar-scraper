@@ -42,7 +42,7 @@ async def main():
                             "filing_date": filing["published"] if filing["published"] is not None else "N/A",
                             "link": filing["link"],
                         }
-                        await telegram_client.send_alert(filing_details, analysis["summary"])
+                        await telegram_client.send_alert(filing_details, analysis["summary"][:200])
                     db.add_filing(filing_id)
                 else:
                     logging.warning(

@@ -15,7 +15,12 @@ class KeywordAnalyzer:
         'tokens', 'NFT', 'Web3', 'DLT', 'cryptographic', 'mining', 'DeFi', 'DAO',
         'Bitcoin', 'BTC', 'Ethereum', 'ETH', 'Tether', 'USDT', 'XRP', 'BNB',
         'Solana', 'SOL', 'USD Coin', 'USDC', 'Dogecoin', 'DOGE', 'TRON', 'TRX',
-        'Cardano', 'ADA'
+        'Cardano', 'ADA',
+        'Satoshi Nakamoto', 'Satoshi', 'Vitalik Buterin', 'Gavin Wood', 'Charles Hoskinson',
+        'Elizabeth Stark', 'Anatoly Yakovenko', 'Justin Sun', 'Changpeng Zhao', 'CZ',
+        'Michael Saylor', 'Cathie Wood', 'Brian Armstrong', 'Marc Andreessen',
+        'Mike Novogratz', 'Anthony Pompliano', 'Pomp', 'Andreas Antonopoulos',
+        'Elon Musk', 'Donald Trump', 'Cynthia Lummis', 'Larry Fink'
     ]
 
     def analyze_filing(self, filing_text: str) -> Dict[str, Optional[str]]:

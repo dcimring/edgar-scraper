@@ -51,7 +51,7 @@ class TelegramClient:
         link = self._escape_markdown_v2(filing_details.get('link', 'N/A'))
         summary = self._escape_markdown_v2(summary)
 
-        message = f"""🚨 *New Crypto Filing Alert!* 🚨
+        message = f"""🚨 *New Crypto Filing Alert\\!* 🚨
 
 *Company*: {company_name}
 *Form*: {form_type}
@@ -59,7 +59,7 @@ class TelegramClient:
 *Link*: [{link}]({link})
 
 *Snippet*: {summary}
-        """.replace("*", "\\*").replace("!", "\\!")
+        """
         try:
             await self.bot.send_message(
                 chat_id=self.chat_id,

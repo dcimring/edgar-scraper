@@ -9,3 +9,5 @@ pytest-mock
 
 python-telegram-bot
 beautifulsoup4
+playwright
+pytest-asyncio

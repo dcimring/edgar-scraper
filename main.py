@@ -1,5 +1,6 @@
 import logging
 import time
+from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
 
@@ -7,6 +8,7 @@ from src.database import Database
 from src.keyword_analyzer import KeywordAnalyzer
 from src.sec_client import SecEdgarClient
 from src.telegram_client import TelegramClient
+from src.aave_scraper import AaveScraper
 
 # Configure logging
 logging.basicConfig(
@@ -32,7 +34,7 @@ async def main():
         # Check for daily Aave APY alert
         if last_apy_alert_time is None or (current_time - last_apy_alert_time) >= timedelta(days=1):
             logging.info("Sending daily Aave APY alert...")
-            apy_rates = aave_scraper.get_apy_rates()
+            apy_rates = await aave_scraper.get_apy_rates()
             if apy_rates:
                 message = f"""📊 Daily Aave APY Rates 📊\n\nUSDT: {apy_rates.get('USDT', 'N/A')}\nUSDC: {apy_rates.get('USDC', 'N/A')}\nDAI: {apy_rates.get('DAI', 'N/A')}\n\n(Rates as of {current_time.strftime('%Y-%m-%d %H:%M:%S')})"""
                 await telegram_client.send_alert({'company_name': 'Aave APY Rates', 'form_type': 'Daily Alert', 'filing_date': current_time.strftime('%Y-%m-%d'), 'link': aave_scraper.aave_url}, message)

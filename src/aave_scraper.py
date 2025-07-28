@@ -1,11 +1,11 @@
 import logging
 import os
+import re
 from typing import Dict, Optional
 
-import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-import re
+from playwright.async_api import async_playwright
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ class AaveScraper:
         from_email = os.getenv('FROM_EMAIL', 'daniel@blackhatmedia.com')
         self.headers = {'User-Agent': user_agent, 'From': from_email}
 
-    def get_apy_rates(self) -> Dict[str, Optional[str]]:
+    async def get_apy_rates(self) -> Dict[str, Optional[str]]:
         """
         Retrieves APY rates for USDT, USDC, and DAI from Aave.
 
@@ -31,56 +31,37 @@ class AaveScraper:
             Returns None for a stablecoin if its APY cannot be found.
         """
         apy_rates = {'USDT': None, 'USDC': None, 'DAI': None}
-        try:
-            response = requests.get(self.aave_url, headers=self.headers, timeout=15)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, 'html.parser')
 
-            # Aave's page is dynamic, so direct scraping might be tricky.
-            # We'll look for common patterns for APY display.
-            # This is a simplified example and might need adjustment based on Aave's HTML structure.
-            # Look for elements that contain the stablecoin name and a percentage.
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            page = await browser.new_page(user_agent=self.headers['User-Agent'])
+            try:
+                await page.goto(self.aave_url)
+                
+                # Wait for the elements to be present
+                await page.wait_for_selector('[data-cy^="marketListItemListItem_"]', timeout=20000)
 
-            # Example: Find elements that might contain APY for USDT, USDC, DAI
-            # This part is highly dependent on the actual HTML structure of Aave's page.
-            # You might need to inspect the Aave page's HTML to find the correct selectors.
-            # For demonstration, let's assume a simple structure.
+                soup = BeautifulSoup(await page.content(), 'html.parser')
 
-            # Placeholder for actual scraping logic
-            # You would typically look for specific classes, IDs, or data attributes
-            # associated with the APY rates.
+                for ticker in apy_rates.keys():
+                    # Find the parent div for the asset
+                    asset_div = soup.find('div', attrs={'data-cy': f'marketListItemListItem_{ticker}'})
+                    if asset_div:
+                        # Find the APY within this asset's div
+                        apy_element = asset_div.find('p', attrs={'data-cy': 'apy'})
+                        if apy_element:
+                            apy_rates[ticker] = apy_element.get_text(strip=True)
 
-            # Example (highly speculative without actual HTML inspection):
-            # For USDT
-            usdt_element = soup.find(string=re.compile(r'USDT', re.IGNORECASE))
-            if usdt_element:
-                # Try to find the APY near the USDT text
-                # This is a very basic example, real scraping would be more complex
-                apy_match = re.search(r'\d+\.\d+%', usdt_element.find_next().text if usdt_element.find_next() else '')
-                if apy_match:
-                    apy_rates['USDT'] = apy_match.group(0)
-
-            # For USDC
-            usdc_element = soup.find(string=re.compile(r'USDC', re.IGNORECASE))
-            if usdc_element:
-                apy_match = re.search(r'\d+\.\d+%', usdc_element.find_next().text if usdc_element.find_next() else '')
-                if apy_match:
-                    apy_rates['USDC'] = apy_match.group(0)
-
-            # For DAI
-            dai_element = soup.find(string=re.compile(r'DAI', re.IGNORECASE))
-            if dai_element:
-                apy_match = re.search(r'\d+\.\d+%', dai_element.find_next().text if dai_element.find_next() else '')
-                if apy_match:
-                    apy_rates['DAI'] = apy_match.group(0)
-
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Error fetching Aave APY rates: {e}")
-        except Exception as e:
-            logging.error(f"Error parsing Aave APY rates: {e}")
+            except Exception as e:
+                logging.error(f"Error scraping Aave APY rates with Playwright: {e}")
+            finally:
+                await browser.close()
         return apy_rates
 
 if __name__ == '__main__':
-    scraper = AaveScraper()
-    rates = scraper.get_apy_rates()
-    print(rates)
+    import asyncio
+    async def main():
+        scraper = AaveScraper()
+        rates = await scraper.get_apy_rates()
+        print(rates)
+    asyncio.run(main())

@@ -52,7 +52,7 @@ class AaveScraper:
 
             # Example (highly speculative without actual HTML inspection):
             # For USDT
-            usdt_element = soup.find(text=re.compile(r'USDT', re.IGNORECASE))
+            usdt_element = soup.find(string=re.compile(r'USDT', re.IGNORECASE))
             if usdt_element:
                 # Try to find the APY near the USDT text
                 # This is a very basic example, real scraping would be more complex

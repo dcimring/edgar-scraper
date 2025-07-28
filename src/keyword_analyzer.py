@@ -12,10 +12,10 @@ class KeywordAnalyzer:
 
     CRYPTO_KEYWORDS = [
         'crypto', 'cryptocurrency', 'stablecoin', 'blockchain', 'digital assets',
-        'tokens', 'NFT', 'Web3', 'DLT', 'cryptographic', 'mining', 'DeFi', 'DAO',
-        'Bitcoin', 'BTC', 'Ethereum', 'ETH', 'Tether', 'USDT', 'XRP', 'BNB',
+        'tokens', 'NFT', 'Web3', 'DLT', 'cryptographic', 'DeFi', 'DAO',
+        'Bitcoin', 'BTC', 'Ethereum', 'ETH', 'Tether', 'USDT', 'XRP', 'Binance', 'BNB',
         'Solana', 'SOL', 'USD Coin', 'USDC', 'Dogecoin', 'DOGE', 'TRON', 'TRX',
-        'Cardano', 'ADA',
+        'Cardano', 'ADA', 'Hyperliquid', 'HYPER', 'Polkadot', 'DOT', 'Avalanche', 'AVAX',
         'Satoshi Nakamoto', 'Satoshi', 'Vitalik Buterin', 'Gavin Wood', 'Charles Hoskinson',
         'Elizabeth Stark', 'Anatoly Yakovenko', 'Justin Sun', 'Changpeng Zhao', 'CZ',
         'Michael Saylor', 'Cathie Wood', 'Brian Armstrong', 'Marc Andreessen',

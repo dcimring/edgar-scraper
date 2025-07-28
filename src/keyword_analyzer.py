@@ -18,15 +18,16 @@ class KeywordAnalyzer:
         'Cardano', 'ADA', 'Hyperliquid', 'HYPE', 'Polkadot', 'DOT', 'Avalanche', 'AVAX', 'SUI',
         'Stellar', 'XLM', 'Chainlink', 'LINK', 'Uniswap', 'UNI', 'Curve', 'Curve DAO Token', 'CRV',
         'Hedera', 'HBAR', 'Litecoin', 'LTC', 'Toncoin', 'TON', 'Shiba Inu', 'SHIB', 'USDe', 'Aave', 'Ethena', 'ENA',
-        'Bittensor', 'TAO', 'Etherium Classic', 'ETC', 'Pudgy Penguins', 'PENGU', 'World Liberty Financial', 'WLFI', 'USD1',
+        'Bittensor', 'TAO', 'Etherium Classic', 'Pudgy Penguins', 'PENGU', 'World Liberty Financial', 'WLFI', 'USD1',
         'SPX6900', 'SPX', 'Official Trump', 'TRUMP',
         'Satoshi Nakamoto', 'Satoshi', 'Vitalik Buterin', 'Gavin Wood', 'Charles Hoskinson',
         'Elizabeth Stark', 'Anatoly Yakovenko', 'Justin Sun', 'Changpeng Zhao', 'CZ',
         'Michael Saylor', 'Cathie Wood', 'Brian Armstrong', 'Marc Andreessen',
         'Mike Novogratz', 'Anthony Pompliano', 'Pomp', 'Andreas Antonopoulos',
-        'Elon Musk', 'Donald Trump', 'Cynthia Lummis', 'Larry Fink'
+        'Elon Musk', 'Donald Trump', 'Cynthia Lummis', 'Larry Fink',
+        # 'ETC' gives too many false positives 
     ]
-
+    
     def analyze_filing(self, filing_text: str) -> Dict[str, Optional[str]]:
         """
         Analyzes the filing text for crypto-related keywords and generates a snippet.

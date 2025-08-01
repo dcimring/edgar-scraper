@@ -30,7 +30,7 @@ class TelegramClient:
             )
         self.bot = telebot.TeleBot(bot_token)
 
-    def send_alert(self, filing_details: dict, summary: str):
+    def send_sec_alert(self, filing_details: dict, summary: str):
         """
         Sends a formatted alert message to the configured Telegram chat.
 
@@ -64,6 +64,29 @@ class TelegramClient:
         except Exception as e:
             logging.error(f"Error sending Telegram alert: {e}")
 
+    def send_aave_alert(self, apy_rates: dict):
+        """
+        Sends a formatted alert message with Aave APY rates.
+
+        Args:
+            apy_rates: A dictionary with stablecoin tickers as keys and their APY rates as values.
+        """
+        message = f"""📊 *Daily Aave APY Rates* 📊
+
+*USDT*: {apy_rates.get('USDT', 'N/A')}
+*USDC*: {apy_rates.get('USDC', 'N/A')}
+*DAI*: {apy_rates.get('DAI', 'N/A')}
+        """
+        try:
+            self.bot.send_message(
+                chat_id=self.chat_id,
+                text=message,
+                parse_mode="Markdown",
+            )
+            logging.info("Successfully sent Aave APY rates alert.")
+        except Exception as e:
+            logging.error(f"Error sending Aave APY rates alert: {e}")
+
 
 if __name__ == "__main__":
     # This is an example of how to use the TelegramClient.
@@ -76,4 +99,11 @@ if __name__ == "__main__":
         'link': 'https://www.sec.gov/example-filing'
     }
     summary = "This is a test summary."
-    client.send_alert(sample_filing, summary)
+    client.send_sec_alert(sample_filing, summary)
+
+    aave_rates = {
+        'USDT': '1.23%',
+        'USDC': '0.87%',
+        'DAI': '0.55%'
+    }
+    client.send_aave_alert(aave_rates)

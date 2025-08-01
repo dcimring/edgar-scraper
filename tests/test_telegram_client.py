@@ -27,7 +27,7 @@ class TestTelegramClient(unittest.TestCase):
             "link": "http://example.com",
         }
         summary = "This is a test summary."
-        client.send_alert(filing_details, summary)
+        client.send_sec_alert(filing_details, summary)
 
         # Verify that send_message was called once
         mock_send_message.assert_called_once()
@@ -54,7 +54,7 @@ class TestTelegramClient(unittest.TestCase):
         }
         summary = "This is a test summary."
         # We don't need to assert anything here, just that no exception is raised
-        client.send_alert(filing_details, summary)
+        client.send_sec_alert(filing_details, summary)
 
 
 if __name__ == "__main__":

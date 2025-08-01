@@ -54,8 +54,7 @@ def main():
             logging.info("Sending daily Aave APY alert...")
             apy_rates = aave_scraper.get_apy_rates()
             if apy_rates:
-                message = f"""📊 Daily Aave APY Rates 📊\n\nUSDT: {apy_rates.get('USDT', 'N/A')}\nUSDC: {apy_rates.get('USDC', 'N/A')}\nDAI: {apy_rates.get('DAI', 'N/A')}\n\n(Rates as of {current_time.strftime('%Y-%m-%d %H:%M:%S')})"""
-                telegram_client.send_alert({'company_name': 'Aave APY Rates', 'form_type': 'Daily Alert', 'filing_date': current_time.strftime('%Y-%m-%d'), 'link': aave_scraper.aave_url}, message)
+                telegram_client.send_aave_alert(apy_rates)
                 last_apy_alert_time = current_time
             else:
                 logging.warning("Could not retrieve Aave APY rates.")
@@ -78,7 +77,7 @@ def main():
                             "filing_date": filing["published"] if filing["published"] is not None else "N/A",
                             "link": filing["link"],
                         }
-                        telegram_client.send_alert(filing_details, analysis["summary"][:200])
+                        telegram_client.send_sec_alert(filing_details, analysis["summary"][:200])
                     db.add_filing(filing_id)
                 else:
                     logging.warning(

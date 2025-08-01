@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ class AaveScraper:
         from_email = os.getenv('FROM_EMAIL', 'daniel@blackhatmedia.com')
         self.headers = {'User-Agent': user_agent, 'From': from_email}
 
-    async def get_apy_rates(self) -> Dict[str, Optional[str]]:
+    def get_apy_rates(self) -> Dict[str, Optional[str]]:
         """
         Retrieves APY rates for USDT, USDC, and DAI from Aave.
 
@@ -32,16 +32,16 @@ class AaveScraper:
         """
         apy_rates = {'USDT': None, 'USDC': None, 'DAI': None}
 
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page(user_agent=self.headers['User-Agent'])
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(user_agent=self.headers['User-Agent'])
             try:
-                await page.goto(self.aave_url)
+                page.goto(self.aave_url)
                 
                 # Wait for the elements to be present
-                await page.wait_for_selector('[data-cy^="marketListItemListItem_"]', timeout=20000)
+                page.wait_for_selector('[data-cy^="marketListItemListItem_"]', timeout=20000)
 
-                soup = BeautifulSoup(await page.content(), 'html.parser')
+                soup = BeautifulSoup(page.content(), 'html.parser')
 
                 for ticker in apy_rates.keys():
                     # Find the parent div for the asset
@@ -55,13 +55,10 @@ class AaveScraper:
             except Exception as e:
                 logging.error(f"Error scraping Aave APY rates with Playwright: {e}")
             finally:
-                await browser.close()
+                browser.close()
         return apy_rates
 
 if __name__ == '__main__':
-    import asyncio
-    async def main():
-        scraper = AaveScraper()
-        rates = await scraper.get_apy_rates()
-        print(rates)
-    asyncio.run(main())
+    scraper = AaveScraper()
+    rates = scraper.get_apy_rates()
+    print(rates)

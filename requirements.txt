@@ -7,7 +7,6 @@ isort
 pytest
 pytest-mock
 
-python-telegram-bot
+pyTelegramBotAPI
 beautifulsoup4
 playwright
-pytest-asyncio
